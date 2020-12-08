@@ -108,7 +108,9 @@ func (d *DNSServer) handleRequest(w dns.ResponseWriter, r *dns.Msg) {
 			d.readQuery(m)
 		}
 	}
-	w.WriteMsg(m)
+	if m.Answer != nil {
+		w.WriteMsg(m)
+	}
 }
 
 func (d *DNSServer) readQuery(m *dns.Msg) {
