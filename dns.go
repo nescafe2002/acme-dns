@@ -86,6 +86,12 @@ func (d *DNSServer) appendRR(rr dns.RR) {
 }
 
 func (d *DNSServer) handleRequest(w dns.ResponseWriter, r *dns.Msg) {
+	for _, q := range r.Question {
+		if q.Qtype == dns.TypeANY {
+			return
+		}
+	}
+
 	m := new(dns.Msg)
 	m.SetReply(r)
 
@@ -108,9 +114,7 @@ func (d *DNSServer) handleRequest(w dns.ResponseWriter, r *dns.Msg) {
 			d.readQuery(m)
 		}
 	}
-	if m.Answer != nil {
-		w.WriteMsg(m)
-	}
+	w.WriteMsg(m)
 }
 
 func (d *DNSServer) readQuery(m *dns.Msg) {
